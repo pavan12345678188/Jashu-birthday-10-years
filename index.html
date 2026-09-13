@@ -1,0 +1,870 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#070606">
+<title>Jashu — 10 Years of Memories</title>
+<style>
+/* =========================================================
+   JASHU — CINEMATIC 10TH BIRTHDAY WEBSITE
+   Everything is local: no framework, no build step.
+   ========================================================= */
+
+:root{
+  --bg:#070606;
+  --bg2:#100d0b;
+  --cream:#f5eee2;
+  --muted:#aaa198;
+  --gold:#d7b36b;
+  --gold2:#f2d79a;
+  --line:rgba(255,255,255,.14);
+  --glass:rgba(10,9,8,.72);
+  --max:1500px;
+}
+
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;background:var(--bg)}
+body{margin:0;background:var(--bg);color:var(--cream);font-family:Arial,Helvetica,sans-serif;font-weight:300;overflow-x:hidden}
+body.locked{overflow:hidden}
+button{font:inherit}
+a{color:inherit;text-decoration:none}
+img{display:block;max-width:100%}
+
+/* ---------- cinematic atmosphere ---------- */
+.grain{position:fixed;inset:-50%;z-index:1000;pointer-events:none;opacity:.035;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");animation:noise .16s steps(2) infinite}
+@keyframes noise{0%{transform:translate(0,0)}25%{transform:translate(2%,-1%)}50%{transform:translate(-1%,2%)}75%{transform:translate(1%,1%)}100%{transform:translate(0,0)}}
+
+.cursor-light{position:fixed;width:260px;height:260px;border-radius:50%;pointer-events:none;z-index:1;background:radial-gradient(circle,rgba(215,179,107,.09),transparent 68%);transform:translate(-50%,-50%);mix-blend-mode:screen}
+
+/* ---------- opening screen ---------- */
+.intro{position:fixed;inset:0;z-index:900;background:#050505;display:grid;place-items:center;transition:opacity 1s ease,visibility 1s ease}
+.intro.hide{opacity:0;visibility:hidden;pointer-events:none}
+.intro-inner{text-align:center;width:min(900px,90vw);padding:30px}
+.intro-kicker{font-size:10px;letter-spacing:.42em;text-transform:uppercase;color:var(--muted)}
+.intro-name{margin:25px 0 10px;font-family:Georgia,"Times New Roman",serif;font-size:clamp(80px,17vw,190px);line-height:.72;font-weight:400;letter-spacing:-.04em}
+.intro-date{font-family:Georgia,"Times New Roman",serif;font-size:clamp(22px,4vw,42px);color:#ddd2c2;letter-spacing:.12em}
+.intro-copy{max-width:560px;margin:30px auto;color:#9c9690;line-height:1.8;font-size:14px}
+.enter{border:1px solid rgba(215,179,107,.65);border-radius:999px;background:transparent;color:var(--cream);padding:15px 27px;letter-spacing:.22em;text-transform:uppercase;font-size:10px;cursor:pointer;transition:.35s}
+.enter:hover{background:var(--cream);color:#090808;transform:translateY(-2px)}
+
+
+/* =========================================================
+   ADVANCED CINEMATIC OPENING + INTERACTIVE CANDLE
+   ========================================================= */
+
+.intro{
+  overflow:hidden;
+  background:
+    radial-gradient(circle at 50% 50%,rgba(215,179,107,.07),transparent 35%),
+    #030303;
+}
+.intro::before{
+  content:"";
+  position:absolute;inset:0;pointer-events:none;
+  background:
+    radial-gradient(circle at 20% 30%,rgba(255,255,255,.035),transparent 20%),
+    radial-gradient(circle at 80% 70%,rgba(215,179,107,.035),transparent 22%);
+}
+.intro-loader{
+  position:absolute;
+  inset:0;
+  display:grid;
+  place-items:center;
+  z-index:5;
+  transition:opacity .8s ease,visibility .8s ease,transform 1s ease;
+}
+.intro-loader.done{
+  opacity:0;
+  visibility:hidden;
+  transform:scale(1.04);
+}
+.loader-inner{
+  width:min(520px,78vw);
+  text-align:center;
+}
+.loader-mark{
+  width:46px;height:46px;margin:0 auto 24px;
+  border:1px solid rgba(215,179,107,.35);
+  border-radius:50%;
+  display:grid;place-items:center;
+  color:#d7b36b;
+  font-family:Georgia,serif;
+  animation:loaderPulse 1.8s ease-in-out infinite;
+}
+.loader-kicker{
+  font-size:9px;letter-spacing:.42em;text-transform:uppercase;color:#8e877f;
+}
+.loader-line{
+  height:1px;width:100%;background:rgba(255,255,255,.1);
+  margin-top:26px;overflow:hidden;position:relative;
+}
+.loader-line::after{
+  content:"";position:absolute;inset:0;
+  transform:translateX(-100%);
+  background:linear-gradient(90deg,transparent,#d7b36b,#f7dfad,transparent);
+  animation:loadingLine 2.6s cubic-bezier(.7,0,.2,1) forwards;
+}
+.loader-percent{
+  margin-top:10px;text-align:right;font-size:8px;letter-spacing:.25em;color:#716b64;
+}
+@keyframes loadingLine{to{transform:translateX(100%)}}
+@keyframes loaderPulse{50%{transform:scale(1.12);box-shadow:0 0 35px rgba(215,179,107,.12)}}
+
+.candle-stage{
+  position:absolute;inset:0;
+  display:grid;place-items:center;
+  opacity:0;visibility:hidden;transform:scale(.97);
+  transition:opacity 1.1s ease,visibility 1.1s ease,transform 1.2s cubic-bezier(.2,.8,.2,1);
+  perspective:1200px;
+}
+.candle-stage.show{
+  opacity:1;visibility:visible;transform:none;
+}
+.candle-world{
+  position:relative;width:min(700px,92vw);height:min(650px,86vh);
+  display:grid;place-items:center;
+}
+.candle-vignette{
+  position:absolute;inset:0;border-radius:50%;
+  background:radial-gradient(circle,rgba(215,179,107,.12),transparent 58%);
+  filter:blur(18px);opacity:.7;
+}
+.candle-scene{
+  position:relative;width:310px;height:430px;
+  transform-style:preserve-3d;
+  transform:rotateX(7deg);
+  animation:candleFloat 6s ease-in-out infinite;
+}
+@keyframes candleFloat{50%{transform:rotateX(4deg) translateY(-8px)}}
+
+.cake-shadow{
+  position:absolute;left:50%;bottom:35px;transform:translateX(-50%);
+  width:300px;height:50px;border-radius:50%;
+  background:rgba(0,0,0,.65);filter:blur(18px);
+}
+.cake-plate{
+  position:absolute;left:50%;bottom:54px;transform:translateX(-50%) translateZ(-15px);
+  width:300px;height:26px;border-radius:50%;
+  background:linear-gradient(#eadfcf,#8b7760);
+  box-shadow:0 20px 35px rgba(0,0,0,.5);
+}
+.cake-layer{
+  position:absolute;left:50%;transform:translateX(-50%);
+  width:245px;border-radius:18px 18px 12px 12px;
+  box-shadow:inset 0 8px 12px rgba(255,255,255,.12),inset 0 -12px 20px rgba(0,0,0,.22),0 18px 35px rgba(0,0,0,.35);
+}
+.cake-bottom{bottom:75px;height:82px;background:linear-gradient(145deg,#6d3423,#a85b36 48%,#4e251b)}
+.cake-mid{bottom:142px;height:76px;width:215px;background:linear-gradient(145deg,#f1d9bd,#b97852 55%,#75402c)}
+.cake-top{bottom:201px;height:68px;width:190px;background:linear-gradient(145deg,#f8e9d5,#c8895e 55%,#7b4430)}
+.frost{
+  position:absolute;left:50%;transform:translateX(-50%);
+  border-radius:50%;background:#f5e7d2;
+  box-shadow:0 4px 8px rgba(0,0,0,.2);
+}
+.frost.one{bottom:191px;width:205px;height:20px}
+.frost.two{bottom:134px;width:225px;height:18px}
+.candle{
+  position:absolute;left:50%;bottom:254px;transform:translateX(-50%) translateZ(20px);
+  width:27px;height:112px;border-radius:8px 8px 5px 5px;
+  background:repeating-linear-gradient(135deg,#f7dfad 0 8px,#b98645 8px 12px);
+  box-shadow:0 8px 18px rgba(0,0,0,.35);
+}
+.candle::after{
+  content:"";position:absolute;left:50%;top:-13px;transform:translateX(-50%);
+  width:3px;height:17px;background:#25211d;border-radius:3px;
+}
+.flame-button{
+  position:absolute;left:50%;top:-63px;transform:translateX(-50%);
+  width:82px;height:95px;border:0;background:transparent;cursor:pointer;
+  z-index:10;
+}
+.flame{
+  position:absolute;left:50%;bottom:15px;transform:translateX(-50%) rotate(45deg);
+  width:28px;height:42px;border-radius:70% 0 70% 70%;
+  background:linear-gradient(135deg,#fff8d7 0 28%,#ffd46a 45%,#e87426 85%);
+  box-shadow:0 0 20px #ffc65a,0 0 55px rgba(255,177,62,.8);
+  animation:flameDance .16s ease-in-out infinite alternate;
+}
+.flame::after{
+  content:"";position:absolute;left:7px;top:10px;width:12px;height:20px;
+  border-radius:50%;background:#fff9dc;filter:blur(1px);
+}
+@keyframes flameDance{to{transform:translateX(-50%) rotate(42deg) scale(.94)}}
+.candle.off .flame{opacity:0;transform:translateX(-50%) rotate(45deg) scale(.2);box-shadow:none;transition:.35s}
+.candle-glow{
+  position:absolute;left:50%;top:-50px;transform:translateX(-50%);
+  width:180px;height:180px;border-radius:50%;
+  background:radial-gradient(circle,rgba(255,184,73,.24),transparent 67%);
+  filter:blur(8px);pointer-events:none;
+}
+.candle.off .candle-glow{opacity:0;transition:.35s}
+
+.candle-copy{
+  position:absolute;top:15px;left:0;right:0;text-align:center;z-index:3;
+}
+.candle-kicker{font-size:9px;letter-spacing:.48em;text-transform:uppercase;color:#bba98d}
+.candle-title{margin:22px 0 10px;font-family:Georgia,serif;font-size:clamp(45px,8vw,78px);font-weight:400;line-height:.9}
+.candle-hint{color:#8f8982;font-size:11px;letter-spacing:.14em;text-transform:uppercase}
+
+.candle-continue{
+  position:absolute;left:50%;bottom:0;transform:translateX(-50%) translateY(20px);
+  opacity:0;pointer-events:none;
+  border:1px solid rgba(215,179,107,.65);border-radius:999px;
+  background:rgba(0,0,0,.45);color:#f3e2bd;padding:13px 23px;
+  font-size:9px;letter-spacing:.26em;text-transform:uppercase;cursor:pointer;
+  transition:opacity .7s ease,transform .7s ease,background .3s ease;
+}
+.candle-stage.lit .candle-continue{
+  opacity:1;pointer-events:auto;transform:translateX(-50%);
+}
+.candle-continue:hover{background:#f3e2bd;color:#090706}
+
+.decor{
+  position:absolute;inset:0;pointer-events:none;opacity:0;
+  transition:opacity 1s ease;
+}
+.candle-stage.lit .decor{opacity:1}
+.balloon{
+  position:absolute;width:54px;height:70px;border-radius:52% 48% 48% 52%;
+  background:linear-gradient(145deg,rgba(244,215,164,.95),rgba(112,67,35,.9));
+  box-shadow:inset -8px -10px 18px rgba(0,0,0,.2),0 12px 30px rgba(0,0,0,.3);
+  animation:balloonFloat 5s ease-in-out infinite;
+}
+.balloon::after{content:"";position:absolute;bottom:-105px;left:50%;width:1px;height:105px;background:rgba(215,179,107,.4)}
+.balloon.a{left:5%;top:25%;transform:rotate(-8deg)}
+.balloon.b{right:7%;top:18%;transform:rotate(9deg);animation-delay:.8s}
+.balloon.c{left:13%;bottom:14%;width:42px;height:56px;animation-delay:1.4s}
+.balloon.d{right:14%;bottom:10%;width:43px;height:57px;animation-delay:2s}
+@keyframes balloonFloat{50%{translate:0 -15px}}
+.spark{
+  position:absolute;width:3px;height:3px;border-radius:50%;background:#f5d58f;
+  box-shadow:0 0 12px #f5d58f;animation:sparkle 2.5s ease-in-out infinite;
+}
+@keyframes sparkle{0%,100%{opacity:.15;transform:scale(.7)}50%{opacity:1;transform:scale(1.6)}}
+.confetti{
+  position:absolute;top:-30px;width:5px;height:16px;border-radius:2px;
+  background:#d7b36b;animation:confettiDrop 3.8s linear infinite;
+}
+@keyframes confettiDrop{to{transform:translateY(720px) rotate(540deg);opacity:.05}}
+
+@media(max-width:600px){
+  .candle-scene{transform:scale(.82) rotateX(7deg)}
+  .candle-world{height:610px}
+  .balloon{transform:scale(.75)}
+}
+@media(prefers-reduced-motion:reduce){
+  .candle-scene,.flame,.balloon,.confetti,.spark{animation:none!important}
+}
+
+/* ---------- navigation + sound ---------- */
+.nav{position:fixed;top:0;left:0;right:0;z-index:600;display:flex;justify-content:space-between;align-items:center;padding:20px 4vw;pointer-events:none}
+.nav>*{pointer-events:auto}
+.brand{font-size:10px;letter-spacing:.28em;text-transform:uppercase;color:#e7ddd0}
+.nav-links{display:flex;gap:25px;font-size:9px;letter-spacing:.18em;text-transform:uppercase;color:#c2bbb2}
+.nav-links a{transition:.25s}.nav-links a:hover{color:white}
+.sound{position:fixed;top:20px;right:24px;z-index:700;border:1px solid rgba(255,255,255,.2);background:var(--glass);backdrop-filter:blur(14px);color:#eee;border-radius:999px;padding:10px 14px;font-size:10px;letter-spacing:.15em;text-transform:uppercase;cursor:pointer}
+.sound.on{border-color:rgba(215,179,107,.7);color:var(--gold2)}
+
+/* ---------- generic sections ---------- */
+.section{position:relative;max-width:var(--max);margin:auto;padding:120px 5vw}
+.eyebrow{font-size:10px;letter-spacing:.35em;text-transform:uppercase;color:var(--gold);margin-bottom:20px}
+.section-title{font-family:Georgia,"Times New Roman",serif;font-size:clamp(48px,8vw,105px);font-weight:400;line-height:.88;margin:0;letter-spacing:-.035em}
+.section-copy{max-width:650px;color:#a7a09a;line-height:1.8;font-size:14px}
+.rule{height:1px;background:linear-gradient(90deg,var(--gold),transparent);opacity:.45;margin:45px 0}
+
+/* ---------- HERO ---------- */
+.hero{min-height:100svh;position:relative;display:grid;place-items:center;overflow:hidden;padding:110px 5vw 70px;background:radial-gradient(circle at 50% 45%,#251b12 0,#0d0a08 40%,#060606 78%)}
+.hero-bg{position:absolute;inset:-5%;z-index:0;overflow:hidden}
+.hero-bg img{width:100%;height:100%;object-fit:cover;object-position:center;filter:blur(24px) brightness(.23) saturate(.7);transform:scale(1.1)}
+.hero-bg:after{content:"";position:absolute;inset:0;background:radial-gradient(circle at center,transparent 15%,rgba(0,0,0,.7) 80%),linear-gradient(180deg,rgba(0,0,0,.55),rgba(0,0,0,.75))}
+.hero-grid{position:relative;z-index:2;width:min(1400px,100%);display:grid;grid-template-columns:1fr 1.1fr 1fr;align-items:center;gap:clamp(25px,4vw,70px)}
+.hero-copy{text-align:center;order:2}
+.hero-kicker{font-size:10px;letter-spacing:.42em;color:#b9aea1;text-transform:uppercase}
+.hero-number{font-family:Georgia,"Times New Roman",serif;font-size:clamp(130px,20vw,300px);line-height:.68;font-weight:400;color:#e6c681;text-shadow:0 0 45px rgba(215,179,107,.12);margin:45px 0 30px}
+.hero-title{font-family:Georgia,"Times New Roman",serif;font-weight:400;font-size:clamp(38px,5vw,76px);line-height:.9;margin:0}
+.hero-sub{margin:25px auto 0;max-width:480px;color:#b6afa8;line-height:1.8;font-size:13px}
+.hero-cta{display:inline-flex;margin-top:34px;border:1px solid rgba(215,179,107,.65);border-radius:999px;padding:14px 24px;font-size:10px;letter-spacing:.25em;text-transform:uppercase;color:#f1dfb7;transition:.35s}
+.hero-cta:hover{background:#f1dfb7;color:#100c08;transform:translateY(-2px)}
+
+/* exact photo frames: NO cropping */
+.photo-stage{perspective:1200px;min-width:0}
+.photo-frame{position:relative;background:#eee;padding:10px 10px 46px;box-shadow:0 30px 80px rgba(0,0,0,.55);transform-style:preserve-3d;transition:transform .15s ease-out;will-change:transform}
+.photo-frame:before{content:"";position:absolute;inset:8px;transform:translateZ(-15px);background:rgba(215,179,107,.12);filter:blur(20px);z-index:-1}
+.photo-frame img{width:100%;height:auto;max-height:68vh;object-fit:contain;background:#171513}
+.photo-frame .caption{position:absolute;left:0;right:0;bottom:13px;text-align:center;color:#27221d;font-family:Georgia,"Times New Roman",serif;font-size:16px}
+.left-frame{transform:rotateY(9deg) rotateZ(-2deg)}
+.right-frame{transform:rotateY(-9deg) rotateZ(2deg)}
+.frame-label{position:absolute;top:14px;left:14px;background:rgba(0,0,0,.62);color:white;padding:7px 9px;font-size:8px;letter-spacing:.2em;text-transform:uppercase;z-index:2}
+
+/* ---------- 3D chapter ---------- */
+.chapter{background:linear-gradient(180deg,#090706,#0f0b08 50%,#080706);overflow:hidden}
+.chapter .section{display:grid;grid-template-columns:.85fr 1.15fr;gap:8vw;align-items:center}
+.chapter-3d{perspective:1400px;min-height:530px;display:grid;place-items:center}
+.stack{position:relative;width:min(470px,85vw);height:500px;transform-style:preserve-3d;transform:rotateX(5deg) rotateY(-12deg);animation:float 7s ease-in-out infinite}
+@keyframes float{0%,100%{transform:rotateX(5deg) rotateY(-12deg) translateY(0)}50%{transform:rotateX(3deg) rotateY(-8deg) translateY(-13px)}}
+.stack-card{position:absolute;inset:0;border:1px solid rgba(215,179,107,.3);border-radius:3px;background:#15110d;overflow:hidden;box-shadow:0 35px 80px rgba(0,0,0,.5)}
+.stack-card.back{transform:translateZ(-80px) translateX(40px) rotateZ(5deg);opacity:.45}
+.stack-card.mid{transform:translateZ(-40px) translateX(20px) rotateZ(-3deg);opacity:.7}
+.stack-card.front{transform:translateZ(0)}
+.stack-card img{width:100%;height:100%;object-fit:contain;background:#111}
+.stack-label{position:absolute;left:25px;bottom:22px;right:25px;display:flex;justify-content:space-between;align-items:end;color:#fff;text-shadow:0 2px 10px #000}
+.stack-label strong{font-family:Georgia,"Times New Roman",serif;font-size:28px;font-weight:400}.stack-label span{font-size:9px;letter-spacing:.25em;text-transform:uppercase;color:#ddd}
+
+/* ---------- memories ---------- */
+.memories{background:#070606}
+.memory-head{display:flex;justify-content:space-between;gap:30px;align-items:end;margin-bottom:55px}
+.memory-count{font-family:Georgia,"Times New Roman",serif;font-size:34px;color:#bfa77c;white-space:nowrap}
+.gallery{columns:3 300px;column-gap:22px}
+.memory{break-inside:avoid;margin:0 0 22px;background:#12100f;border:1px solid rgba(255,255,255,.07);padding:8px;position:relative;cursor:pointer;transform:translateZ(0);transition:transform .35s,box-shadow .35s,border-color .35s}
+.memory:hover{transform:translateY(-7px) scale(1.008);box-shadow:0 25px 50px rgba(0,0,0,.45);border-color:rgba(215,179,107,.35)}
+.memory img{width:100%;height:auto;object-fit:contain;background:#0b0a09}
+.memory-info{display:flex;justify-content:space-between;gap:12px;padding:11px 4px 4px;color:#817a73;font-size:9px;letter-spacing:.14em;text-transform:uppercase}
+.memory-info b{font-weight:400;color:#c8b8a3}
+
+
+/* ---------- BIRTHDAY SPOTLIGHT / COLLAGE ---------- */
+.birthday-spotlight{
+  position:relative; overflow:hidden;
+  background:
+    radial-gradient(circle at 20% 25%, rgba(255,190,80,.13), transparent 28%),
+    radial-gradient(circle at 80% 70%, rgba(255,105,160,.10), transparent 30%),
+    linear-gradient(180deg,#090706 0%,#130b09 48%,#070606 100%);
+  padding:clamp(90px,10vw,150px) 5vw;
+}
+.birthday-spotlight .spotlight-inner{
+  max-width:1400px; margin:auto; display:grid;
+  grid-template-columns:minmax(0,1.05fr) minmax(340px,.95fr);
+  gap:clamp(45px,7vw,110px); align-items:center;
+}
+.spotlight-copy{position:relative;z-index:3}
+.spotlight-copy .eyebrow{margin-bottom:18px}
+.spotlight-kicker{font-size:10px;letter-spacing:.38em;text-transform:uppercase;color:#d8c4a6;margin-bottom:22px}
+.spotlight-title{font-family:Georgia,"Times New Roman",serif;font-weight:400;font-size:clamp(58px,8vw,118px);line-height:.82;letter-spacing:-.045em;margin:0}
+.spotlight-title em{font-style:normal;color:#e4c27e}
+.spotlight-copy p{max-width:560px;color:#aaa19a;line-height:1.9;font-size:14px;margin:28px 0 0}
+.spotlight-date{display:inline-flex;gap:12px;align-items:center;margin-top:30px;color:#dfd4c6;font-size:10px;letter-spacing:.22em;text-transform:uppercase}
+.spotlight-date:before{content:"";width:34px;height:1px;background:#d7b36b}
+.spotlight-badges{display:flex;flex-wrap:wrap;gap:9px;margin-top:28px}
+.spotlight-badge{border:1px solid rgba(215,179,107,.28);background:rgba(255,255,255,.025);padding:11px 14px;color:#cfc0ae;font-size:9px;letter-spacing:.17em;text-transform:uppercase}
+.collage-stage{position:relative;perspective:1400px;min-width:0}
+.collage-halo{position:absolute;inset:8% -7%;border-radius:50%;background:radial-gradient(circle,rgba(230,180,90,.18),transparent 63%);filter:blur(16px);animation:haloPulse 4.5s ease-in-out infinite;pointer-events:none}
+.collage-card{position:relative;z-index:2;width:min(610px,100%);margin:auto;padding:12px;background:linear-gradient(135deg,#29231c,#0c0a08 55%,#2a2118);border:1px solid rgba(231,194,126,.42);box-shadow:0 40px 100px rgba(0,0,0,.72),0 0 0 1px rgba(255,255,255,.04) inset;transform:rotateY(-7deg) rotateX(2deg) rotateZ(1deg);transition:transform .7s cubic-bezier(.2,.8,.2,1),box-shadow .7s ease}
+.collage-stage:hover .collage-card{transform:rotateY(0) rotateX(0) rotateZ(0) translateY(-7px);box-shadow:0 50px 120px rgba(0,0,0,.8),0 0 45px rgba(215,179,107,.12)}
+.collage-card img{width:100%;height:auto;display:block;object-fit:contain;background:#0a0908}
+.collage-shine{position:absolute;inset:12px;z-index:3;pointer-events:none;background:linear-gradient(120deg,transparent 30%,rgba(255,255,255,.12) 46%,transparent 60%);transform:translateX(-120%);animation:collageShine 6s ease-in-out infinite}
+.collage-caption{position:absolute;left:28px;right:28px;bottom:28px;z-index:4;display:flex;justify-content:space-between;align-items:end;gap:20px;pointer-events:none}
+.collage-caption strong{font-family:Georgia,serif;font-size:clamp(22px,3vw,34px);font-weight:400;color:#fff;text-shadow:0 2px 15px #000}
+.collage-caption span{font-size:8px;letter-spacing:.22em;text-transform:uppercase;color:#eee;text-shadow:0 2px 10px #000}
+.celebrate-orb{position:absolute;width:14px;height:14px;border-radius:50%;background:#f2c875;box-shadow:0 0 18px #f2c875;opacity:.75;animation:orbFloat 5s ease-in-out infinite}
+.celebrate-orb.o1{left:7%;top:18%}.celebrate-orb.o2{left:44%;top:8%;animation-delay:1.2s}.celebrate-orb.o3{right:6%;top:35%;animation-delay:2s}.celebrate-orb.o4{right:22%;bottom:11%;animation-delay:.7s}
+.celebrate-confetti{position:absolute;inset:0;pointer-events:none;z-index:1;overflow:hidden}
+.celebrate-confetti i{position:absolute;top:-30px;width:5px;height:13px;border-radius:2px;background:#d7b36b;opacity:.75;animation:celebrateDrop 5s linear infinite}
+.celebrate-confetti i:nth-child(2n){width:3px;height:9px;animation-duration:6.5s;background:#eee0c2}.celebrate-confetti i:nth-child(3n){height:17px;animation-duration:7.2s;background:#a88654}
+@keyframes haloPulse{0%,100%{opacity:.55;transform:scale(.96)}50%{opacity:1;transform:scale(1.04)}}
+@keyframes collageShine{0%,55%{transform:translateX(-120%)}75%,100%{transform:translateX(120%)}}
+@keyframes orbFloat{0%,100%{transform:translateY(0) scale(.8);opacity:.35}50%{transform:translateY(-22px) scale(1.2);opacity:1}}
+@keyframes celebrateDrop{to{transform:translate3d(60px,110vh,0) rotate(600deg);opacity:.05}}
+@media(max-width:1000px){
+ .birthday-spotlight .spotlight-inner{grid-template-columns:1fr;max-width:760px}
+ .collage-stage{order:-1}.collage-card{transform:none}
+}
+@media(max-width:600px){
+ .birthday-spotlight{padding:85px 5vw}.collage-card{padding:7px}.collage-caption{left:15px;right:15px;bottom:15px}.collage-caption span{display:none}
+ .spotlight-title{font-size:clamp(54px,16vw,82px)}
+}
+
+/* ---------- letter ---------- */
+.letter{background:radial-gradient(circle at 50% 20%,#24170d 0,#0d0907 55%,#070606 100%)}
+.letter-box{max-width:1000px;margin:auto;border:1px solid rgba(215,179,107,.25);padding:clamp(35px,7vw,90px);background:rgba(13,10,8,.72);box-shadow:0 30px 100px rgba(0,0,0,.35);position:relative}
+.letter-box:before{content:"“";position:absolute;top:-45px;left:50%;transform:translateX(-50%);font:100px Georgia,serif;color:#d7b36b;background:#0d0907;padding:0 20px;line-height:1}
+.letter-text{font-family:Georgia,"Times New Roman",serif;font-size:clamp(24px,3vw,39px);line-height:1.35;color:#e8dfd2;text-align:center}
+.letter-sign{margin-top:40px;text-align:center;color:#b99d6a;font-size:10px;letter-spacing:.3em;text-transform:uppercase}
+
+/* ---------- wishes ---------- */
+.wishes{padding-bottom:150px;text-align:center}
+.wishes .section-copy{margin:25px auto}
+.wish-row{display:flex;justify-content:center;flex-wrap:wrap;gap:12px;margin-top:35px}
+.wish{border:1px solid rgba(215,179,107,.25);padding:12px 18px;color:#c8b9a8;font-size:10px;letter-spacing:.17em;text-transform:uppercase;background:rgba(255,255,255,.02)}
+
+/* ---------- lightbox ---------- */
+.lightbox{position:fixed;inset:0;z-index:950;background:rgba(0,0,0,.92);backdrop-filter:blur(15px);display:none;align-items:center;justify-content:center;padding:45px 25px}
+.lightbox.open{display:flex}
+.lightbox img{max-width:92vw;max-height:86vh;width:auto;height:auto;object-fit:contain;box-shadow:0 30px 100px #000}
+.close-lightbox,.lb-prev,.lb-next{position:absolute;border:1px solid rgba(255,255,255,.2);background:rgba(0,0,0,.5);color:white;border-radius:999px;width:45px;height:45px;cursor:pointer}
+.close-lightbox{top:22px;right:25px;font-size:22px}.lb-prev{left:25px;top:50%;transform:translateY(-50%)}.lb-next{right:25px;top:50%;transform:translateY(-50%)}
+.lb-caption{position:absolute;bottom:18px;left:0;right:0;text-align:center;font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:#aaa}
+
+/* ---------- footer ---------- */
+footer{border-top:1px solid rgba(255,255,255,.08);padding:25px 5vw 40px;display:flex;justify-content:space-between;gap:20px;color:#6f6964;font-size:9px;letter-spacing:.18em;text-transform:uppercase}
+
+/* ---------- reveal ---------- */
+.reveal{opacity:0;transform:translateY(35px);transition:opacity .9s ease,transform .9s ease}.reveal.visible{opacity:1;transform:none}
+
+/* ---------- responsive ---------- */
+@media(max-width:1000px){
+  .nav-links{display:none}.sound{top:16px;right:16px}
+  .hero-grid{grid-template-columns:1fr;max-width:650px}.hero-copy{order:1}.photo-stage{max-width:460px;width:100%;margin:auto}.left-frame,.right-frame{transform:none}.right-stage{order:3}.left-stage{order:2}
+  .hero-number{margin:30px 0}.hero{padding-top:100px}
+  .chapter .section{grid-template-columns:1fr;gap:20px}.chapter-3d{min-height:500px}
+  .memory-head{align-items:start;flex-direction:column}
+}
+@media(max-width:600px){
+  .section{padding:90px 5vw}.hero{padding:90px 5vw 60px}.hero-number{font-size:clamp(110px,32vw,180px)}
+  .photo-frame{padding:7px 7px 39px}.photo-frame .caption{font-size:13px;bottom:10px}
+  .stack{height:420px}.chapter-3d{min-height:440px}
+  .gallery{columns:1}.memory{margin-bottom:14px}
+  .lightbox{padding:60px 12px 50px}.lb-prev{left:10px}.lb-next{right:10px}
+  footer{flex-direction:column}
+}
+
+@media(prefers-reduced-motion:reduce){*,*:before,*:after{scroll-behavior:auto!important;animation:none!important;transition:none!important}.cursor-light{display:none}}
+</style>
+</head>
+<body class="locked">
+
+<div class="grain"></div>
+<div class="cursor-light" id="cursorLight"></div>
+
+<!-- =========================================================
+     01. OPENING SCREEN
+     Click ENTER once. Browsers block music autoplay until a user
+     interaction, so this click also starts the birthday song.
+     ========================================================= -->
+<div class="intro" id="intro">
+  <!-- Loading phase -->
+  <div class="intro-loader" id="introLoader">
+    <div class="loader-inner">
+      <div class="loader-mark">J</div>
+      <div class="loader-kicker">Preparing a decade of memories</div>
+      <div class="loader-line"></div>
+      <div class="loader-percent" id="loaderPercent">00%</div>
+    </div>
+  </div>
+
+  <!-- Interactive candle phase -->
+  <div class="candle-stage" id="candleStage">
+    <div class="candle-world">
+
+      <div class="candle-copy">
+        <div class="candle-kicker">13 September 2016 · 10th Birthday</div>
+        <h1 class="candle-title">For Jashu.</h1>
+        <div class="candle-hint">Click the candle flame to light the celebration</div>
+      </div>
+
+      <div class="decor" id="decorations" aria-hidden="true">
+        <span class="balloon a"></span><span class="balloon b"></span>
+        <span class="balloon c"></span><span class="balloon d"></span>
+        <span class="spark" style="left:22%;top:22%;animation-delay:.2s"></span>
+        <span class="spark" style="left:76%;top:31%;animation-delay:1s"></span>
+        <span class="spark" style="left:31%;top:70%;animation-delay:1.7s"></span>
+        <span class="spark" style="left:82%;top:72%;animation-delay:.7s"></span>
+        <span class="spark" style="left:15%;top:53%;animation-delay:1.2s"></span>
+        <span class="spark" style="left:88%;top:48%;animation-delay:.4s"></span>
+        <i class="confetti" style="left:9%;animation-delay:.1s"></i>
+        <i class="confetti" style="left:24%;animation-delay:1.1s"></i>
+        <i class="confetti" style="left:42%;animation-delay:2.1s"></i>
+        <i class="confetti" style="left:61%;animation-delay:.8s"></i>
+        <i class="confetti" style="left:79%;animation-delay:1.7s"></i>
+        <i class="confetti" style="left:93%;animation-delay:2.6s"></i>
+      </div>
+
+      <div class="candle-scene">
+        <div class="candle-shadow"></div>
+        <div class="cake-shadow"></div>
+        <div class="cake-plate"></div>
+        <div class="cake-layer cake-bottom"></div>
+        <div class="cake-layer cake-mid"></div>
+        <div class="cake-layer cake-top"></div>
+        <div class="frost one"></div>
+        <div class="frost two"></div>
+
+        <div class="candle" id="birthdayCandle">
+          <div class="candle-glow"></div>
+          <button class="flame-button" id="flameButton" aria-label="Light or extinguish the birthday candle">
+            <span class="flame"></span>
+          </button>
+        </div>
+      </div>
+
+      <button class="candle-continue" id="enterBtn" type="button">
+        Enter Jashu's story ↓
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- =========================================================
+     02. AUDIO
+
+<!-- =========================================================
+     02. AUDIO
+     The user's supplied song is stored locally as music.mp3.
+     ========================================================= -->
+<audio id="music" src="assets/music.mp3" preload="auto" loop></audio>
+<button class="sound" id="soundBtn" type="button" aria-label="Toggle birthday music">SOUND · OFF</button>
+
+<!-- =========================================================
+     03. NAVIGATION
+     ========================================================= -->
+<nav class="nav">
+  <div class="brand">JAYASRIKRISHNA · JASHU</div>
+</nav>
+
+<!-- =========================================================
+     04. HERO
+     The first two photos are deliberately shown as natural images.
+     No crop is applied to either one.
+     02.jpg = supplied baby photo
+     03.jpg = supplied yellow-shirt childhood photo
+     ========================================================= -->
+<section class="hero" id="home">
+  <div class="hero-bg"><img src="assets/02.jpg" alt="Jashu childhood photo background"></div>
+  <div class="hero-grid">
+    <div class="photo-stage left-stage" data-tilt>
+      <div class="photo-frame left-frame">
+        <span class="frame-label">Little Jashu · 01</span>
+        <img src="assets/02.jpg" alt="Jashu as a baby" loading="eager">
+        <div class="caption">The smile that started it all ♡</div>
+      </div>
+    </div>
+
+    <div class="hero-copy">
+      <div class="hero-kicker">A Decade of Love · 2016 — 2026</div>
+      <div class="hero-number">10</div>
+      <h1 class="hero-title">Years of Jashu.</h1>
+      <p class="hero-sub">From that tiny smile to the person you are becoming — every year has given us another reason to smile.</p>
+      <a class="hero-cta" href="#story">Begin the story ↓</a>
+    </div>
+
+    <div class="photo-stage right-stage" data-tilt>
+      <div class="photo-frame right-frame">
+        <span class="frame-label">A Beautiful Beginning · 02</span>
+        <img src="assets/03.jpg" alt="Jashu childhood portrait" loading="eager">
+        <div class="caption">Same smile. Always. ♡</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- =========================================================
+     05. THE 3D CHAPTER
+     This is a CSS 3D presentation only. Original photos are not
+     edited. The image itself stays complete inside the card.
+     ========================================================= -->
+<section class="chapter" id="story">
+  <div class="section reveal">
+    <div>
+      <div class="eyebrow">01 / The Beginning</div>
+      <h2 class="section-title">Before we knew<br>how fast time flies.</h2>
+      <div class="rule"></div>
+      <p class="section-copy">There was a time when Jashu was small enough to fit in our arms, and a smile was enough to make an entire room feel brighter. This chapter is about those first little moments.</p>
+      <p class="section-copy">Today, that tiny baby is celebrating ten beautiful years — and somehow the smile still feels exactly the same.</p>
+    </div>
+    <div class="chapter-3d">
+      <div class="stack">
+        <div class="stack-card back"><img src="assets/01.jpg" alt="Jashu memory"></div>
+        <div class="stack-card mid"><img src="assets/03.jpg" alt="Jashu childhood portrait"></div>
+        <div class="stack-card front">
+          <img src="assets/02.jpg" alt="Jashu baby photo">
+          <div class="stack-label"><strong>Little Jashu</strong><span>2016</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- =========================================================
+     06. BIRTHDAY SPOTLIGHT
+     The supplied collage is shown as the original image.
+     CSS creates the cinematic frame, glow and 3D movement around it.
+     The pixels of the photograph are never edited or cropped.
+     ========================================================= -->
+<section class="birthday-spotlight" id="celebration">
+  <div class="celebrate-confetti" aria-hidden="true">
+    <i style="left:5%;animation-delay:.2s"></i><i style="left:12%;animation-delay:1.4s"></i>
+    <i style="left:21%;animation-delay:2.6s"></i><i style="left:31%;animation-delay:.8s"></i>
+    <i style="left:43%;animation-delay:3.2s"></i><i style="left:54%;animation-delay:1.8s"></i>
+    <i style="left:65%;animation-delay:2.2s"></i><i style="left:74%;animation-delay:.5s"></i>
+    <i style="left:84%;animation-delay:3.7s"></i><i style="left:94%;animation-delay:1.1s"></i>
+  </div>
+  <span class="celebrate-orb o1"></span><span class="celebrate-orb o2"></span>
+  <span class="celebrate-orb o3"></span><span class="celebrate-orb o4"></span>
+
+  <div class="spotlight-inner">
+    <div class="collage-stage reveal">
+      <div class="collage-halo"></div>
+      <div class="collage-card">
+        <img src="assets/birthday-collage.jpg" alt="Happy Birthday Jashu — childhood memories collage" loading="eager">
+        <div class="collage-shine"></div>
+        <div class="collage-caption">
+          <strong>Happy Birthday, Jashu.</strong>
+          <span>10 years · 25 memories · one beautiful story</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="spotlight-copy reveal">
+      <div class="eyebrow">03 / THE BIRTHDAY CELEBRATION</div>
+      <div class="spotlight-kicker">A whole decade of smiles</div>
+      <h2 class="spotlight-title">The happiest<br><em>chapter</em> yet.</h2>
+      <p>This is the moment to celebrate the little boy who filled ten years with smiles, mischief, memories and love. One photograph cannot hold a decade — so this one holds as many moments as possible.</p>
+      <div class="spotlight-date">13 September 2016 — 13 September 2026</div>
+      <div class="spotlight-badges">
+        <span class="spotlight-badge">10 Beautiful Years</span>
+        <span class="spotlight-badge">Countless Smiles</span>
+        <span class="spotlight-badge">Forever Loved</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- =========================================================
+     07. MEMORY GALLERY
+     Masonry columns preserve the natural aspect ratio of every
+     photo. Nothing is forced into a fixed-height box.
+     ========================================================= -->
+<section class="memories" id="memories">
+  <div class="section">
+    <div class="memory-head reveal">
+      <div><div class="eyebrow">02 / The Memories</div><h2 class="section-title">Twenty-five little<br>pieces of forever.</h2></div>
+      <div class="memory-count">25 / 25</div>
+    </div>
+    <div class="gallery" id="gallery"></div>
+  </div>
+</section>
+
+<!-- =========================================================
+     07. LETTER
+     ========================================================= -->
+<section class="letter" id="letter">
+  <div class="section reveal">
+    <div class="letter-box">
+      <div class="eyebrow" style="text-align:center">03 / A Letter for Jashu</div>
+      <div class="letter-text">“Ten years ago, you arrived and quietly changed the meaning of happiness for all of us. Keep your beautiful heart, keep laughing loudly, keep dreaming without limits — and remember that no matter how old you become, you will always be our little Jashu.”</div>
+      <div class="letter-sign">With all our love · Happy 10th Birthday</div>
+    </div>
+  </div>
+</section>
+
+<!-- =========================================================
+     08. WISHES
+     ========================================================= -->
+<section class="wishes" id="wishes">
+  <div class="section reveal">
+    <div class="eyebrow">04 / The Next Chapter</div>
+    <h2 class="section-title">The best chapters<br>haven't been written yet.</h2>
+    <p class="section-copy">May the next ten years bring bigger dreams, kind people, unforgettable adventures and a lifetime of reasons to smile.</p>
+    <div class="wish-row">
+      <span class="wish">Big Dreams</span><span class="wish">Kind Heart</span><span class="wish">Bright Future</span><span class="wish">Endless Smiles</span><span class="wish">Always Loved</span>
+    </div>
+  </div>
+</section>
+
+<footer><span>JayaSriKrishna · Jashu · Born 13 September 2016</span><span>Forever our little boy ♡</span></footer>
+
+<!-- =========================================================
+     09. FULL PHOTO VIEWER
+     ========================================================= -->
+<div class="lightbox" id="lightbox" aria-hidden="true">
+  <button class="close-lightbox" id="closeLb" aria-label="Close">×</button>
+  <button class="lb-prev" id="prevLb" aria-label="Previous photo">‹</button>
+  <img id="lbImage" src="" alt="Expanded Jashu memory">
+  <button class="lb-next" id="nextLb" aria-label="Next photo">›</button>
+  <div class="lb-caption" id="lbCaption"></div>
+</div>
+
+<script>
+/* =========================================================
+   10. PHOTO DATA
+   Keep this list simple. To add another photo, add its filename.
+   ========================================================= */
+const photos = Array.from({length:25}, (_,i) => {
+  const n = String(i + 1).padStart(2,'0');
+  return {src:`assets/${n}.jpg`, label:`Jashu Memory ${i + 1}`};
+});
+
+/* =========================================================
+   11. BUILD THE GALLERY
+   Every image keeps its natural aspect ratio.
+   ========================================================= */
+const gallery = document.getElementById('gallery');
+photos.forEach((photo,index)=>{
+  const card = document.createElement('article');
+  card.className = 'memory reveal';
+  card.dataset.index = index;
+  card.innerHTML = `
+    <img src="${photo.src}" alt="${photo.label}" loading="lazy">
+    <div class="memory-info"><b>${String(index+1).padStart(2,'0')}</b><span>${photo.label}</span></div>`;
+  gallery.appendChild(card);
+});
+
+/* =========================================================
+   12. REVEAL ON SCROLL
+   ========================================================= */
+const observer = new IntersectionObserver(entries=>{
+  entries.forEach(entry=>{ if(entry.isIntersecting) entry.target.classList.add('visible'); });
+},{threshold:.12});
+document.querySelectorAll('.reveal').forEach(el=>observer.observe(el));
+
+/* =========================================================
+   13. MUSIC — ON / OFF
+   Browsers require a user gesture before sound can start.
+   The opening ENTER button is that gesture.
+   ========================================================= */
+const music = document.getElementById('music');
+const soundBtn = document.getElementById('soundBtn');
+const intro = document.getElementById('intro');
+const enterBtn = document.getElementById('enterBtn');
+let musicOn = false;
+
+function updateSoundButton(){
+  soundBtn.textContent = musicOn ? 'SOUND · ON' : 'SOUND · OFF';
+  soundBtn.classList.toggle('on', musicOn);
+}
+
+async function startMusic(){
+  try{
+    music.volume = 0.72;
+    await music.play();
+    musicOn = true;
+  }catch(e){
+    musicOn = false;
+  }
+  updateSoundButton();
+}
+
+const candleStage = document.getElementById('candleStage');
+const candle = document.getElementById('birthdayCandle');
+const flameButton = document.getElementById('flameButton');
+let candleLit = false;
+
+async function lightCandle(){
+  candleLit = true;
+  candle.classList.remove('off');
+  candleStage.classList.add('lit');
+  flameButton.setAttribute('aria-label','Extinguish the birthday candle');
+  // The candle click is a real user gesture, so the supplied song may start here.
+  await startMusic();
+}
+
+function extinguishCandle(){
+  candleLit = false;
+  candle.classList.add('off');
+  candleStage.classList.remove('lit');
+  flameButton.setAttribute('aria-label','Light the birthday candle');
+}
+
+flameButton.addEventListener('click', async(e)=>{
+  e.stopPropagation();
+  if(candleLit) extinguishCandle();
+  else await lightCandle();
+});
+
+enterBtn.addEventListener('click', async()=>{
+  intro.classList.add('hide');
+  document.body.classList.remove('locked');
+  if(!musicOn) await startMusic();
+  setTimeout(()=>document.getElementById('home').scrollIntoView({behavior:'smooth'}),500);
+});
+
+soundBtn.addEventListener('click', async()=>{
+  if(musicOn){
+    music.pause();
+    musicOn = false;
+  }else{
+    await startMusic();
+  }
+  updateSoundButton();
+});
+
+/* =========================================================
+   14. OPENING LOADER
+   A measured loading line gives the page a film-title feel.
+   ========================================================= */
+const introLoader = document.getElementById('introLoader');
+const loaderPercent = document.getElementById('loaderPercent');
+let loadProgress = 0;
+const loaderTimer = setInterval(()=>{
+  loadProgress += Math.floor(Math.random()*7)+2;
+  if(loadProgress >= 100){
+    loadProgress = 100;
+    clearInterval(loaderTimer);
+  }
+  loaderPercent.textContent = String(loadProgress).padStart(2,'0') + '%';
+}, 120);
+
+setTimeout(()=>{
+  introLoader.classList.add('done');
+  candleStage.classList.add('show');
+}, 2800);
+
+/* =========================================================
+   15. 3D MOUSE TILT
+   The photo pixels themselves are never changed or cropped.
+   Only the outer frame moves in 3D space.
+   ========================================================= */
+document.querySelectorAll('[data-tilt]').forEach(stage=>{
+  const frame = stage.querySelector('.photo-frame');
+  stage.addEventListener('pointermove',e=>{
+    if(window.innerWidth < 1000) return;
+    const r = stage.getBoundingClientRect();
+    const x = (e.clientX-r.left)/r.width-.5;
+    const y = (e.clientY-r.top)/r.height-.5;
+    frame.style.transform = `rotateY(${x*-14}deg) rotateX(${y*10}deg) rotateZ(${x*-2}deg) translateZ(8px)`;
+  });
+  stage.addEventListener('pointerleave',()=>{frame.style.transform='';});
+});
+
+/* =========================================================
+   16. LIGHTBOX
+   Click any memory to see the COMPLETE original photo.
+   ========================================================= */
+const lightbox = document.getElementById('lightbox');
+const lbImage = document.getElementById('lbImage');
+const lbCaption = document.getElementById('lbCaption');
+let currentIndex = 0;
+
+function showPhoto(index){
+  currentIndex = (index + photos.length) % photos.length;
+  const p = photos[currentIndex];
+  lbImage.src = p.src;
+  lbImage.alt = p.label;
+  lbCaption.textContent = `${String(currentIndex+1).padStart(2,'0')} / 25 · ${p.label}`;
+  lightbox.classList.add('open');
+  lightbox.setAttribute('aria-hidden','false');
+  document.body.classList.add('locked');
+}
+function closePhoto(){
+  lightbox.classList.remove('open');
+  lightbox.setAttribute('aria-hidden','true');
+  document.body.classList.remove('locked');
+}
+
+gallery.addEventListener('click',e=>{
+  const card=e.target.closest('.memory');
+  if(card) showPhoto(Number(card.dataset.index));
+});
+document.getElementById('closeLb').addEventListener('click',closePhoto);
+document.getElementById('prevLb').addEventListener('click',()=>showPhoto(currentIndex-1));
+document.getElementById('nextLb').addEventListener('click',()=>showPhoto(currentIndex+1));
+lightbox.addEventListener('click',e=>{if(e.target===lightbox) closePhoto();});
+document.addEventListener('keydown',e=>{
+  if(!lightbox.classList.contains('open')) return;
+  if(e.key==='Escape') closePhoto();
+  if(e.key==='ArrowLeft') showPhoto(currentIndex-1);
+  if(e.key==='ArrowRight') showPhoto(currentIndex+1);
+});
+
+/* =========================================================
+   17. MOUSE LIGHT
+   ========================================================= */
+const cursorLight=document.getElementById('cursorLight');
+document.addEventListener('pointermove',e=>{
+  cursorLight.style.left=e.clientX+'px';
+  cursorLight.style.top=e.clientY+'px';
+});
+</script>
+</body>
+</html>
